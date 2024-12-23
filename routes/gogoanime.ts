@@ -7,7 +7,7 @@ import { Redis } from 'ioredis';
 
 const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
   const gogoanime = new Gogoanime();
-  const redisCacheTime = Infinity; // Infinite caching
+  const redisCacheTime = 60 * 60;
   const redisPrefix = 'gogoanime:';
 
   fastify.get('/', (_, rp) => {
