@@ -5,12 +5,7 @@ import { Redis } from 'ioredis';
 TLDR; " Expires " is seconds based. for example 60*60 would = 3600 (an hour)
 */
 
-const fetch = async <T>(
-  redis: Redis,
-  key: string,
-  fetcher: () => T,
-  expires?: number // Optional expires parameter
-) => {
+const fetch = async <T>(redis: Redis, key: string, fetcher: () => T, expires: number) => {
   const existing = await get<T>(redis, key);
   if (existing !== null) return existing;
 
@@ -28,11 +23,7 @@ const get = async <T>(redis: Redis, key: string): Promise<T> => {
 const set = async <T>(redis: Redis, key: string, fetcher: () => T, expires: number) => {
   console.log(`SET: ${key}, EXP: ${expires}`);
   const value = await fetcher();
-  if (expires !== undefined && expires !== null && expires !== Infinity) {
-    await redis.set(key, JSON.stringify(value), 'EX', expires); // Set expiration if defined
-  } else {
-    await redis.set(key, JSON.stringify(value)); // No expiration for infinite caching
-  }
+  await redis.set(key, JSON.stringify(value), 'EX', expires);
   return value;
 };
 
